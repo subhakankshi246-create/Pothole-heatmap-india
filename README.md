@@ -5,6 +5,7 @@ dashcam footage and generates a real-time priority heatmap with automated
 PWD alerts for municipal authorities across Indian cities.
 
 ## Architecture
+![Architecture](architecture.svg)
 
 Dashcam Video Frames
 ↓
