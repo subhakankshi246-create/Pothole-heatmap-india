@@ -39,30 +39,64 @@ Auto-generated PWD Notice (Motor Vehicles Act 1988)
 - Synthetic road sensor data — 50,000 sections across 6 cities generated using PySpark
 - Severity scoring inspired by Abed et al. (2023) pavement condition research
 
-## How to Run
+## How to Run (Step by Step)
 
-### Step 1 — Train YOLO model on Kaggle
-1. Open Kaggle and add dataset: surbhisaswatimohanty/bharatpothole
-2. Enable GPU T4 accelerator
-3. Run all cells in 02_train_yolov8_kaggle.ipynb
-4. Download pothole_best.pt from Kaggle output
+### Prerequisites
+- Databricks account (free tier works)
+- Kaggle account (free)
+- Python 3.10+
 
-### Step 2 — Setup Databricks
-1. Upload best.pt to /Volumes/workspace/default/pothole_models/
-2. Run 00_setup_python.ipynb — generates Delta Lake tables with 50,000 road sections
-3. Run 01_mlflow_inference.ipynb — registers model in MLflow
-4. Run 02_severity_scoring.ipynb — scores all road sections and generates PWD alerts
-5. Open Databricks Dashboard: Pothole Heatmap - India Road Health Monitor
+### Step 1 — Databricks Setup
+1. Go to community.cloud.databricks.com
+2. Open SQL Editor → run:
+   CREATE DATABASE IF NOT EXISTS pothole_heatmap;
+3. Create new notebook → attach to Serverless compute
+4. Copy paste 00_setup_python.py → Run All cells
+   Expected output: "✅ Delta Lake is working — data is queryable!"
+   Time: ~3 minutes
 
-## Demo Steps
-1. Open the Databricks Dashboard link below
-2. Observe 47,100+ critical road sections flagged nationwide
-3. Check Top 10 Highest Risk Road Sections table
-4. Open 02_severity_scoring notebook, Cell 5 — read auto-generated PWD notice
-5. Open MLflow Experiments — pothole_heatmap_experiment — view model metrics
+### Step 2 — Train YOLO Model (Kaggle)
+1. Go to kaggle.com → New Notebook
+2. Add dataset: surbhisaswatimohanty/bharatpothole
+3. Enable GPU T4 accelerator (Settings → Accelerator)
+4. Paste code from notebooks/kaggle_training.py
+5. Run all cells
+   Expected output: mAP50 ~0.39, pothole_best.pt in output
+   Time: ~25 minutes
 
+### Step 3 — Upload Model to Databricks
+1. Download best.pt from Kaggle output tab
+2. Databricks → Data Ingestion → Upload
+3. Create volume: workspace/default/pothole_models
+4. Upload best.pt → path: /Volumes/workspace/default/pothole_models/best.pt
+
+### Step 4 — Run MLflow Notebook
+1. Open 01_mlflow_inference.py in Databricks
+2. Run all cells (skip Cell 1 pip install — not needed on Serverless)
+   Expected output: "✅ Model logged to MLflow!"
+
+### Step 5 — Run Severity Scoring
+1. Open 02_severity_scoring.py in Databricks
+2. Run all cells
+   Expected output: PWD alerts table saved, sample notice printed
+
+### Step 6 — Run Random Forest
+1. Open 03_random_forest_ml.py in Databricks
+2. Run all cells
+   Expected output: AUC-ROC ~0.639, feature importance printed
+
+### Step 7 — View Dashboard
 ## Live Dashboard
 [Pothole Heatmap - India Road Health Monitor]((https://dbc-8785c366-12b2.cloud.databricks.com/dashboardsv3/01f14026fa1f1ac7ad349d522e4428cf/published?o=7474647709257499))
+
+## Demo Steps for Judges
+1. Open dashboard link above → observe 47K critical sections
+2. Open 02_severity_scoring notebook → scroll to Cell 5 → 
+   read auto-generated PWD notice
+3. Go to Experiments (left sidebar) → pothole_heatmap_experiment → 
+   click the run → verify mAP50=0.392 logged
+4. Open 03_random_forest_ml → Cell 5 → verify feature importance table
+
 
 ## Model Performance
 | Metric | Value |
