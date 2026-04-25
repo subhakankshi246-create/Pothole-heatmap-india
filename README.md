@@ -99,11 +99,11 @@ Auto-generated PWD Notice (Motor Vehicles Act 1988)
 
 
 ## Model Performance
-| Metric | Value |
-|--------|-------|
-| mAP50 | 0.392 |
-| Precision | 0.497 |
-| Recall | 0.421 |
+| Metric | v1 (baseline) | v2 (augmented) |
+|--------|--------------|----------------|
+| mAP50 | 0.392 | 0.396 |
+| Precision | 0.497 | 0.545 |
+| Recall | 0.421 | 0.403 |
 | Training data | 7,000+ Indian dashcam frames |
 | Training platform | Kaggle Tesla T4 GPU |
 
